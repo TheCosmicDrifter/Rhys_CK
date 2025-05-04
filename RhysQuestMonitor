@@ -1,0 +1,37 @@
+#The purpose of this script is to determine if a certain part of the **"A Change Arrangement"** 
+#quest, **TG00,** is completed. If it is, it will disable an instance of the **Actor Rhys** where 
+#he is a con man, and part of introducing the player to **Riften.** This instance of **Rhys** is 
+#only meant to be enabled if the **Thieves' Guild** questline has yet to start. If it has, he will 
+#be disabled, and the player will first meet him in the **Ragged Flagon.** 
+
+
+Scriptname RhysQuestMonitor extends Quest
+
+Quest Property TG00 Auto
+ReferenceAlias Property RhysAlias Auto
+
+Int LastStage = -1
+
+Event OnInit()
+    Debug.Trace("RhysQuestMonitor: OnInit")
+    RegisterForSingleUpdate(1.0)
+EndEvent
+
+Event OnUpdate()
+    Int currentStage = TG00.GetStage()
+    Debug.Trace("RhysQuestMonitor: TG00 stage = " + currentStage)
+
+    If currentStage != LastStage
+        LastStage = currentStage
+
+        If currentStage >= 10
+            Debug.Trace("RhysQuestMonitor: Disabling Rhys")
+            RhysAlias.GetReference().Disable()
+        Else
+            Debug.Trace("RhysQuestMonitor: Enabling Rhys")
+            RhysAlias.GetReference().Enable()
+        EndIf
+    EndIf
+
+    RegisterForSingleUpdate(2.0)
+EndEvent
